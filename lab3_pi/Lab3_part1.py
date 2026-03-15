@@ -166,10 +166,10 @@ def save_csv(time_array: np.ndarray, signal_v: np.ndarray, path: str = CSV_PATH)
 
 
 def main():
-    setup_adc()
-    time_array, signal_v = recording()
-    plot_time_domain(time_array, signal_v)
-    save_csv(time_array, signal_v)
+    # setup_adc()
+    # time_array, signal_v = recording()
+    # plot_time_domain(time_array, signal_v)
+    # save_csv(time_array, signal_v)
 
 
     # open csv which has form of time and raw ADC value
@@ -208,7 +208,7 @@ def main():
     ax2.set_xlabel('Frequency [Hz]')
     ax2.set_ylabel('Magnitude')
     ax2.set_title('Frequency Domain With Hamming Window')
-    ax2.set_xlim(0, 3)
+    # ax2.set_xlim(0, 3)
     ax2.legend()
     ax2.grid(True, alpha=0.3)
     plt.tight_layout()
