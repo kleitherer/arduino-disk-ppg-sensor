@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH = "./ppg_data_500hz_50s.csv"
+CSV_PATH = "./ppg_data_500hz_50s_final_test.csv"
 TARGET_FS_HZ = 500
 
 # ── Load data ────────────────────────────────────────────────────────────────
