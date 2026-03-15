@@ -48,18 +48,8 @@ TARGET_FS_HZ = 500                    # current standards seem to be ~250 Hz for
 # Increase for Part II (HRV needs several minutes of continuous data).
 RECORD_DURATION_S = 60.0
 
-# FFT window length — how many seconds of the recording to feed into the FFT.
-# This sets frequency resolution:  Δf = 1 / FFT_WINDOW_S
-#   10 s  →  Δf = 0.100 Hz  (~6 BPM resolution)
-#   30 s  →  Δf = 0.033 Hz  (~2 BPM resolution)
-#   62 s  →  Δf = 0.016 Hz  (~1 BPM resolution, resolves 60 vs 61 BPM)
-# Must be ≤ RECORD_DURATION_S.  The FFT is taken from the END of the recording
-# so any initial transient (finger settling) is excluded.
-FFT_WINDOW_S = 10.0
-
 # Output files
 PLOT_TIME_PATH = os.path.join(SCRIPT_DIR, "ppg_time_domain_2.png")
-PLOT_FFT_PATH  = os.path.join(SCRIPT_DIR, "ppg_fft.png")
 CSV_PATH       = os.path.join(SCRIPT_DIR, "ppg_data.csv")
 
 # Voltage Conversion
@@ -166,53 +156,11 @@ def save_csv(time_array: np.ndarray, signal_v: np.ndarray, path: str = CSV_PATH)
 
 
 def main():
-    # setup_adc()
-    # time_array, signal_v = recording()
-    # plot_time_domain(time_array, signal_v)
-    # save_csv(time_array, signal_v)
+    setup_adc()
+    time_array, signal_v = recording()
+    plot_time_domain(time_array, signal_v)
+    save_csv(time_array, signal_v)
 
-
-    # open csv which has form of time and raw ADC value
-    data = np.loadtxt(CSV_PATH, delimiter=",", skiprows=1)
-    t = data[:, 0]
-    ppg_waveform = data[:, 1]
-    N = len(ppg_waveform)
-    dt = 1 / TARGET_FS_HZ
-    # remove DC offset (zero-mean)
-    ppg_demean = ppg_waveform - np.mean(ppg_waveform)
-    freq = np.fft.fftfreq(N, dt)
-    freq_pos = freq[1:N//2]
-
-    ppg_hamming = ppg_demean * np.hamming(N)
-    magnitude = np.abs(np.fft.fft(ppg_hamming)) / N
-    mag_pos = magnitude[1:N//2]
-    fundamental_index = 1 + np.argmax(mag_pos)
-    fundamental_freq_hz = freq[fundamental_index]
-    fundamental_mag = magnitude[fundamental_index]
-
-    # this is time domain and frequency domain without any filtering...
-    gain_factor = 1 << GAIN_CODE
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=False, figsize=(8, 7))
-    # plot time domain for ax1
-    ax1.plot(t, ppg_waveform, linewidth=0.8)
-    ax1.set_xlabel("Time (s)")
-    ax1.set_ylabel("Voltage (V)")
-    ax1.set_title(f"PPG – Time Domain  (PGA {gain_factor}×, fs = {TARGET_FS_HZ} Hz)")
-    ax1.grid(True, alpha=0.3)
-
-    # plot frequency domain for ax2
-    ax2.stem(freq_pos,mag_pos, label="Hamming")
-    ax2.scatter(fundamental_freq_hz, fundamental_mag, color='red', s=60, zorder=5, label=f'Fundamental ({fundamental_freq_hz:.4f} Hz)')
-    print("Fundamental frequency at", fundamental_freq_hz, "Hz -->", fundamental_freq_hz*60, "bpm")
-
-    ax2.set_xlabel('Frequency [Hz]')
-    ax2.set_ylabel('Magnitude')
-    ax2.set_title('Frequency Domain With Hamming Window')
-    # ax2.set_xlim(0, 3)
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.show()
 
 
 

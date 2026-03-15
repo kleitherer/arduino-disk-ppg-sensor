@@ -41,7 +41,7 @@ print("Top 8 peaks (0–2.5 Hz):")
 for i, idx in enumerate(top8_idx):
     print(f"  {i+1}. {freq[idx]:.4f} Hz ({freq[idx]*60:.1f} BPM), mag={mag[idx]:.4f}")
 
-# ── Figure 1: time domain (raw + filtered) and FFT ───────────────────────────
+
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=False, figsize=(10, 12))
 
 # subplot 1 – raw time domain
@@ -95,7 +95,7 @@ plt.tight_layout(h_pad=3.0)
 fig.savefig(os.path.join(SCRIPT_DIR, "ppg_time_and_freq.png"), dpi=150)
 print("Saved → ppg_time_and_freq.png")
 
-# ── Figure 2: STFT spectrogram ────────────────────────────────────────────────
+# STFT spectrogram
 # Window length: 10 s → frequency resolution = 1/10 = 0.1 Hz, fine enough to
 # separate beats ~0.05–0.1 Hz apart while still showing time evolution.
 # Hop: 1 s → one new spectrum per second, giving smooth time axis.
